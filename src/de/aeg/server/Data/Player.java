@@ -5,7 +5,7 @@ import de.aeg.server.Server.Connection;
 public class Player extends GameObject {
 
 	private final Connection con;
-	
+
 	public Player(Connection con, int id) {
 		super(id);
 
@@ -14,10 +14,14 @@ public class Player extends GameObject {
 	}
 
 	public void tick() {
-		String read = this.con.read();
-		if(read != null) {
-			System.out.println(read);
+		if (this.con.isConnected()) {
+			String read = this.con.read();
+			if (read != null) {
+				System.out.println(read);
+			}
+		} else {
+			this.setMove(MoveState.none);
 		}
 	}
-	
+
 }

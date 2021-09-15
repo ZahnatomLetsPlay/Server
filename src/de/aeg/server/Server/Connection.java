@@ -11,12 +11,14 @@ public class Connection {
 	private final Socket socket;
 	private PrintWriter outchan;
 	private BufferedReader inchan;
+	private boolean connected;
 
 	public Connection(Socket socket) {
 		this.socket = socket;
 		try {
 			outchan = new PrintWriter(socket.getOutputStream(), true);
 			inchan = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			connected = true;
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -26,16 +28,36 @@ public class Connection {
 		return socket;
 	}
 
+	public boolean isConnected() {
+		this.checkConnection();
+		return this.connected;
+	}
+
+	private void checkConnection() {
+		if (!(this.connected = socket.isConnected())) {
+			try {
+				this.socket.close();
+				this.outchan.close();
+				this.inchan.close();
+			} catch (IOException e) {
+			}
+		}
+	}
+
 	public String read() {
+		if (!this.isConnected()) {
+			return null;
+		}
 		try {
-			if (inchan.) {
+			if (inchan.ready()) {
 				String read = inchan.readLine();
-				String trash;
-				System.out.print("Trash: ");
-				while ((trash = inchan.readLine()) != null) {
-					System.out.print(trash + " ,");
-				}
-				System.out.println();
+//				String trash;
+//				System.out.print("Trash: ");
+//				while ((trash = inchan.readLine()) != null) {
+//					System.out.print(trash + " ,");
+//				}
+//				System.out.println();
+				socket.getInputStream().skip(socket.getInputStream().available());
 				return read;
 			}
 		} catch (IOException ex) {
